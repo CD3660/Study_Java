@@ -1,0 +1,1 @@
+MsgBox "안녕하세요!" , vbInformation , "메세지!"
