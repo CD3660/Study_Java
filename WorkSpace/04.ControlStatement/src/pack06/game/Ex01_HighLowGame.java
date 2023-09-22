@@ -21,7 +21,10 @@ public class Ex01_HighLowGame {
 				String str = scan.nextLine();
 				int num = Integer.parseInt(str);
 				count--;
-				if (num < ranNum) {
+				if (num == -1) {
+					System.out.println("프로그램을 종료합니다.");
+					break;
+				} else if (num < ranNum) {
 					System.out.println("High " + count + "회 남았습니다.");
 				} else if (num > ranNum) {
 					System.out.println("Low " + count + "회 남았습니다.");
@@ -29,12 +32,7 @@ public class Ex01_HighLowGame {
 					System.out.println("정답! 축하드립니다.");
 					System.out.println("정답까지" + (10 - count) + "회");
 					break;
-				} else if (num == -1) {
-					System.out.println("프로그램을 종료합니다.");
-					break;
-				}
-
-				if (count == 0) {
+				} else if (count == 0) {
 					System.out.println("패배하셨습니다.");
 					break;
 				}
