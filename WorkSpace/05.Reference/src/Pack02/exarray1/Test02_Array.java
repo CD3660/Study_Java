@@ -16,6 +16,15 @@ public class Test02_Array {
 			}
 			System.out.println(star[i]);
 		}
+		
+		for (int i=0; i<5; i++) {
+			if (i==0) {
+				star[i]="★";
+			} else {
+				star[i]=star[i-1]+"★";
+			}
+			System.out.println(star[i]);
+		}
 
 	}
 }
