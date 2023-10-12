@@ -29,6 +29,10 @@ public class ProductMain {
 							adminDao.dtoSortMethod(adminDtos);
 						} if (dto.adminMenu ==1) {
 							adminDtos=adminDao.addProduct(adminDtos);
+						} if (dto.adminMenu ==2) {
+							adminDtos=adminDao.editProduct(adminDtos);
+						} if (dto.adminMenu ==3) {
+							adminDtos=adminDao.deleteProduct(adminDtos);
 						}
 					}
 				}

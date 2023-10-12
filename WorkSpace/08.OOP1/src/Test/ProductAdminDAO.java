@@ -1,11 +1,10 @@
 package Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class ProductAdminDAO {
-	// 상품 추가, 상품 수정, 상품 삭제
-	// adminDao
 	Scanner scan = new Scanner(System.in);
 
 	public ProductAdminDTO[] productList() {
@@ -139,17 +138,17 @@ public class ProductAdminDAO {
 		System.out.println("상품 번호 : " + index);
 		System.out.println("상품 이름을 입력하세요");
 		String name = scan.nextLine();
-		int price= 0;
-		while(true) {
+		int price = 0;
+		while (true) {
 			System.out.println("상품 가격을 입력하세요");
 			String str = scan.nextLine();
 			try {
 				int temp = Integer.parseInt(str);
-				if(temp<=0) {
+				if (temp <= 0) {
 					System.out.println("잘못된 입력");
 					continue;
 				} else {
-					price=temp;
+					price = temp;
 					break;
 				}
 			} catch (Exception e) {
@@ -158,7 +157,156 @@ public class ProductAdminDAO {
 			}
 		}
 		ProductAdminDTO tempDto = new ProductAdminDTO(index, name, price);
-		tempDtos[length]=tempDto;
+		tempDtos[length] = tempDto;
 		return tempDtos;
+	}
+
+	public ProductAdminDTO[] editProduct(ProductAdminDTO[] adminDtos) {
+		while (true) {
+			System.out.println("2. 상품 수정");
+			int[] searched = productSearchByName(adminDtos);
+			if (searchedResult(adminDtos, searched)) {
+				adminDtos = editProcess(adminDtos, searched);
+				break;
+			}
+		}
+		return adminDtos;
+	}
+
+	public int[] productSearchByName(ProductAdminDTO[] adminDtos) {
+		while (true) {
+			System.out.println("원하는 상품의 이름, 번호를 입력하세요. 0. 돌아가기");
+			String str = scan.nextLine();
+			if (str.equals("0")) {
+				int[] arr = new int[0];
+				return arr;
+			}
+			HashMap<Integer, String> tempHash = new HashMap<>();
+			for (int i = 0; i < adminDtos.length; i++) {
+				try {
+					int tempInt = Integer.parseInt(str);
+					if (adminDtos[i].getIndex() == tempInt) {
+						tempHash.put(i, adminDtos[i].getName());
+					}
+				} catch (Exception e) {
+				}
+				if (adminDtos[i].getName().contains(str)) {
+					tempHash.put(i, adminDtos[i].getName());
+				}
+			}
+			if (tempHash.size() != 0) {
+				int length = tempHash.size();
+				int[] tempArr = new int[length];
+				int count = 0;
+				for (int i : tempHash.keySet()) {
+					tempArr[count] = i;
+					count++;
+				}
+				Arrays.sort(tempArr);
+				return tempArr;
+			} else {
+				System.out.println("검색 결과가 없습니다.");
+				System.out.println("다시 검색하세요.");
+			}
+		}
+	}
+
+	public boolean searchedResult(ProductAdminDTO[] adminDtos, int[] arr) {
+		if (arr.length == 0) {
+			return false;
+		}
+		for (int i = 0; i < arr.length; i++) {
+			System.out.println("검색 번호 " + (i + 1) + " : " + adminDtos[arr[i]].getIndex() + ". "
+					+ adminDtos[arr[i]].getName() + " " + adminDtos[arr[i]].getPrice() + "원");
+		}
+		return true;
+	}
+
+	public ProductAdminDTO[] editProcess(ProductAdminDTO[] adminDtos, int[] arr) {
+		while (true) {
+			System.out.println("수정할 상품의 검색 번호를 입력하세요 0. 돌아가기");
+			try {
+				int temp = Integer.parseInt(scan.nextLine());
+				if (temp == 0) {
+					System.out.println("상품 수정 종료");
+					break;
+				} else if (temp <= arr.length && temp > 0) {
+					ProductAdminDTO dto = adminDtos[arr[temp - 1]];
+					System.out.println(temp + "번 선택");
+					display(dto);
+					System.out.println("수정할 이름을 입력하세요");
+					dto.setName(scan.nextLine());
+					while (true) {
+						System.out.println("수정할 가격을 입력하세요");
+						try {
+							int tempPrice = Integer.parseInt(scan.nextLine());
+							if (tempPrice > 0) {
+								dto.setPrice(tempPrice);
+								break;
+							}
+						} catch (Exception e) {
+						}
+						System.out.println("입력 오류");
+					}
+					adminDtos[arr[temp - 1]] = dto;
+					System.out.println("수정 결과");
+					display(dto);
+				}
+			} catch (Exception e) {
+				System.out.println("입력 오류");
+				continue;
+			}
+		}
+		return adminDtos;
+	}
+
+	public ProductAdminDTO[] deleteProduct(ProductAdminDTO[] adminDtos) {
+		while (true) {
+			System.out.println("3. 상품 삭제");
+			int[] searched = productSearchByName(adminDtos);
+			if (searchedResult(adminDtos, searched)) {
+				adminDtos = deleteProcess(adminDtos, searched);
+				break;
+			}
+		}
+		return adminDtos;
+	}
+
+	public ProductAdminDTO[] deleteProcess(ProductAdminDTO[] adminDtos, int[] arr) {
+		while (true) {
+			System.out.println("삭제할 상품의 검색 번호를 입력하세요 0. 돌아가기");
+			int temp;
+			try {
+				temp = Integer.parseInt(scan.nextLine());
+			} catch (Exception e) {
+				System.out.println("입력 오류");
+				continue;
+			}
+			if (temp == 0) {
+				System.out.println("상품 수정 종료");
+				break;
+			} else if (temp <= arr.length && temp > 0) {
+				ProductAdminDTO dto = adminDtos[arr[temp-1]];
+				display(dto);
+				System.out.println("정말 삭제하시겠습니까?");
+				System.out.println("삭제하려면 아무 키나 입력 0. 돌아가기 ");
+				String str = scan.nextLine();
+				if(str.equals("0")) {
+					break;
+				} else {
+					ProductAdminDTO[] tempDtos = new ProductAdminDTO[adminDtos.length-1];
+					int count =0;
+					for (int i=0; i<adminDtos.length; i++) {
+						if(i!=(arr[temp-1])) {
+							tempDtos[count]=adminDtos[i];
+							count++;
+						}
+					}
+					displays(tempDtos);;
+					adminDtos=tempDtos;
+				}
+			}
+		}
+		return adminDtos;
 	}
 }
