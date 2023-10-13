@@ -4,30 +4,32 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import pack02.product.ProductMain;
+
 public class ProductAdminDAO {
 	Scanner scan = new Scanner(System.in);
-
-	public ProductAdminDTO[] productList() {
-		ProductAdminDTO[] adminDtos = new ProductAdminDTO[5];
-		adminDtos[0] = new ProductAdminDTO(1, "스카프", 15000);
-		adminDtos[1] = new ProductAdminDTO(2, "마늘", 3000);
-		adminDtos[2] = new ProductAdminDTO(3, "커피", 55000);
-		adminDtos[3] = new ProductAdminDTO(4, "콜라", 1500);
-		adminDtos[4] = new ProductAdminDTO(5, "가방", 15000);
-
-		return adminDtos;
+	ProductDAO dao = new ProductDAO();
+	ProductMain main = new ProductMain();
+	
+	public ProductAdminDTO adminInfo() {
+		ProductAdminDTO adminDto = new ProductAdminDTO("admin", "admin1");
+		return adminDto;
 	}
 
 	public boolean adminLogin() {
+		ProductAdminDTO adminDto = adminInfo();
 		while (true) {
-			System.out.println("-1입력시 돌아가기");
+			System.out.println("관리자 모드 로그인 0. 돌아가기");
 			System.out.print("아이디 입력 : ");
 			String id = scan.nextLine();
+			if (id.equals("0")) {
+				return false;
+			}
 			System.out.print("비밀번호 입력 : ");
 			String pw = scan.nextLine();
-			if (id.equals("-1") || pw.equals("-1")) {
+			if (pw.equals("0")) {
 				return false;
-			} else if (id.equals("admin") && pw.equals("admin1")) {
+			} else if (id.equals(adminDto.getId()) && pw.equals(adminDto.getPw())) {
 				System.out.println("로그인 성공");
 				return true;
 			} else {
@@ -36,41 +38,53 @@ public class ProductAdminDAO {
 		}
 	}
 
-	public void display(ProductAdminDTO adminDto) {
-		System.out.println(adminDto.getIndex() + ". " + adminDto.getName() + " " + adminDto.getPrice() + "원");
-	}
-
-	public void displays(ProductAdminDTO[] adminDtos) {
-		System.out.println("상품 목록");
-		for (int i = 0; i < adminDtos.length; i++) {
-			display(adminDtos[i]);
+	public boolean adminMenu(ProductDTO[] Dtos) {
+		dao.displays(Dtos);
+		int menuNum = selectAdminMenu();
+		if (menuNum == 4) {
+			return false;
 		}
+		if (menuNum == 0) {
+			dtoSortMethod(Dtos);
+		}
+		if (menuNum == 1) {
+			Dtos = addProduct(Dtos);
+		}
+		if (menuNum == 2) {
+			Dtos = editProduct(Dtos);
+		}
+		if (menuNum == 3) {
+			Dtos = deleteProduct(Dtos);
+		}
+		return true;
 	}
 
 	public int selectAdminMenu() {
-		System.out.println("관리자 메뉴");
-		System.out.println("0. 상품 정렬 방법 변경");
-		System.out.println("1. 상품 추가");
-		System.out.println("2. 상품 수정");
-		System.out.println("3. 상품 삭제");
-		System.out.println("4. 이전으로 (로그아웃)");
-		String str = scan.nextLine();
-		if (str.equals("4")) {
-			return 4;
-		} else if (str.equals("0")) {
-			return 0;
-		} else if (str.equals("1")) {
-			return 1;
-		} else if (str.equals("2")) {
-			return 2;
-		} else if (str.equals("3")) {
-			return 3;
-		} else {
-			return 0;
+		while (true) {
+			System.out.println("관리자 메뉴");
+			System.out.println("0. 상품 정렬 방법 변경");
+			System.out.println("1. 상품 추가");
+			System.out.println("2. 상품 수정");
+			System.out.println("3. 상품 삭제");
+			System.out.println("4. 이전으로 (로그아웃)");
+			String str = scan.nextLine();
+			if (str.equals("4")) {
+				return 4;
+			} else if (str.equals("0")) {
+				return 0;
+			} else if (str.equals("1")) {
+				return 1;
+			} else if (str.equals("2")) {
+				return 2;
+			} else if (str.equals("3")) {
+				return 3;
+			} else {
+				System.out.println("잘못 된 입력");
+			}
 		}
 	}
 
-	public ProductAdminDTO[] dtoSortMethod(ProductAdminDTO[] adminDtos) {
+	public ProductDTO[] dtoSortMethod(ProductDTO[] Dtos) {
 		System.out.println("정렬 방법 선택");
 		System.out.println("1. 상품 번호 순서");
 		System.out.println("2. 상품 번호 순서r");
@@ -81,56 +95,56 @@ public class ProductAdminDAO {
 		String str = scan.nextLine();
 		if (str.equals("1")) {
 			System.out.println("1. 상품 번호 순서");
-			Arrays.sort(adminDtos, (o1, o2) -> {
+			Arrays.sort(Dtos, (o1, o2) -> {
 				return Integer.compare(o1.getIndex(), o2.getIndex());
 			});
 		} else if (str.equals("2")) {
 			System.out.println("2. 상품 번호 순서r");
-			Arrays.sort(adminDtos, (o1, o2) -> {
+			Arrays.sort(Dtos, (o1, o2) -> {
 				return Integer.compare(o2.getIndex(), o1.getIndex());
 			});
 		} else if (str.equals("3")) {
 			System.out.println("3. 상품 이름 순서");
-			Arrays.sort(adminDtos, (o1, o2) -> {
+			Arrays.sort(Dtos, (o1, o2) -> {
 				return o1.getName().compareTo(o2.getName());
 			});
 		} else if (str.equals("4")) {
 			System.out.println("4. 상품 이름 순서r");
-			Arrays.sort(adminDtos, (o1, o2) -> {
+			Arrays.sort(Dtos, (o1, o2) -> {
 				return o2.getName().compareTo(o1.getName());
 			});
 		} else if (str.equals("5")) {
 			System.out.println("5. 상품 가격 순서");
-			Arrays.sort(adminDtos, (o1, o2) -> {
+			Arrays.sort(Dtos, (o1, o2) -> {
 				return Integer.compare(o1.getPrice(), o2.getPrice());
 			});
 		} else if (str.equals("6")) {
 			System.out.println("6. 상품 가격 순서r");
-			Arrays.sort(adminDtos, (o1, o2) -> {
+			Arrays.sort(Dtos, (o1, o2) -> {
 				return Integer.compare(o1.getPrice(), o2.getPrice());
 			});
 		} else {
 			System.out.println("잘못 된 입력");
 		}
-		return adminDtos;
+		return Dtos;
 	}
 
-	public ProductAdminDTO[] addProduct(ProductAdminDTO[] adminDtos) {
+	public ProductDTO[] addProduct(ProductDTO[] Dtos) {
 		System.out.println("1. 상품 추가");
-		int length = adminDtos.length;
-		ProductAdminDTO[] tempDtos = new ProductAdminDTO[length + 1];
+		int length = Dtos.length;
+		ProductDTO[] tempDtos = new ProductDTO[length + 1];
 		for (int i = 0; i < length; i++) {
-			tempDtos[i] = adminDtos[i];
+			tempDtos[i] = Dtos[i];
 		}
 		int index = 1;
 		while (true) {
 			int count = 0;
-			for (int i = 0; i < adminDtos.length; i++) {
-				if (index != adminDtos[i].getIndex()) {
+			for (int i = 0; i < Dtos.length; i++) {
+				if (index != Dtos[i].getIndex()) {
 					count++;
 				}
 			}
-			if (count == adminDtos.length) {
+			if (count == Dtos.length) {
 				break;
 			}
 			index++;
@@ -156,24 +170,24 @@ public class ProductAdminDAO {
 				continue;
 			}
 		}
-		ProductAdminDTO tempDto = new ProductAdminDTO(index, name, price);
+		ProductDTO tempDto = new ProductDTO(index, name, price);
 		tempDtos[length] = tempDto;
 		return tempDtos;
 	}
 
-	public ProductAdminDTO[] editProduct(ProductAdminDTO[] adminDtos) {
+	public ProductDTO[] editProduct(ProductDTO[] Dtos) {
 		while (true) {
 			System.out.println("2. 상품 수정");
-			int[] searched = productSearchByName(adminDtos);
-			if (searchedResult(adminDtos, searched)) {
-				adminDtos = editProcess(adminDtos, searched);
+			int[] searched = productSearchByName(Dtos);
+			if (searchedResult(Dtos, searched)) {
+				Dtos = editProcess(Dtos, searched);
 				break;
 			}
 		}
-		return adminDtos;
+		return Dtos;
 	}
 
-	public int[] productSearchByName(ProductAdminDTO[] adminDtos) {
+	public int[] productSearchByName(ProductDTO[] Dtos) {
 		while (true) {
 			System.out.println("원하는 상품의 이름, 번호를 입력하세요. 0. 돌아가기");
 			String str = scan.nextLine();
@@ -182,16 +196,16 @@ public class ProductAdminDAO {
 				return arr;
 			}
 			HashMap<Integer, String> tempHash = new HashMap<>();
-			for (int i = 0; i < adminDtos.length; i++) {
+			for (int i = 0; i < Dtos.length; i++) {
 				try {
 					int tempInt = Integer.parseInt(str);
-					if (adminDtos[i].getIndex() == tempInt) {
-						tempHash.put(i, adminDtos[i].getName());
+					if (Dtos[i].getIndex() == tempInt) {
+						tempHash.put(i, Dtos[i].getName());
 					}
 				} catch (Exception e) {
 				}
-				if (adminDtos[i].getName().contains(str)) {
-					tempHash.put(i, adminDtos[i].getName());
+				if (Dtos[i].getName().contains(str)) {
+					tempHash.put(i, Dtos[i].getName());
 				}
 			}
 			if (tempHash.size() != 0) {
@@ -211,18 +225,18 @@ public class ProductAdminDAO {
 		}
 	}
 
-	public boolean searchedResult(ProductAdminDTO[] adminDtos, int[] arr) {
+	public boolean searchedResult(ProductDTO[] Dtos, int[] arr) {
 		if (arr.length == 0) {
 			return false;
 		}
 		for (int i = 0; i < arr.length; i++) {
-			System.out.println("검색 번호 " + (i + 1) + " : " + adminDtos[arr[i]].getIndex() + ". "
-					+ adminDtos[arr[i]].getName() + " " + adminDtos[arr[i]].getPrice() + "원");
+			System.out.println("검색 번호 " + (i + 1) + " : " + Dtos[arr[i]].getIndex() + ". " + Dtos[arr[i]].getName()
+					+ " " + Dtos[arr[i]].getPrice() + "원");
 		}
 		return true;
 	}
 
-	public ProductAdminDTO[] editProcess(ProductAdminDTO[] adminDtos, int[] arr) {
+	public ProductDTO[] editProcess(ProductDTO[] Dtos, int[] arr) {
 		while (true) {
 			System.out.println("수정할 상품의 검색 번호를 입력하세요 0. 돌아가기");
 			try {
@@ -231,9 +245,9 @@ public class ProductAdminDAO {
 					System.out.println("상품 수정 종료");
 					break;
 				} else if (temp <= arr.length && temp > 0) {
-					ProductAdminDTO dto = adminDtos[arr[temp - 1]];
+					ProductDTO dto = Dtos[arr[temp - 1]];
 					System.out.println(temp + "번 선택");
-					display(dto);
+					dao.display(dto);
 					System.out.println("수정할 이름을 입력하세요");
 					dto.setName(scan.nextLine());
 					while (true) {
@@ -248,31 +262,33 @@ public class ProductAdminDAO {
 						}
 						System.out.println("입력 오류");
 					}
-					adminDtos[arr[temp - 1]] = dto;
+					Dtos[arr[temp - 1]] = dto;
 					System.out.println("수정 결과");
-					display(dto);
+					dao.display(dto);
+				} else {
+					System.out.println("입력 오류");
 				}
 			} catch (Exception e) {
 				System.out.println("입력 오류");
 				continue;
 			}
 		}
-		return adminDtos;
+		return Dtos;
 	}
 
-	public ProductAdminDTO[] deleteProduct(ProductAdminDTO[] adminDtos) {
+	public ProductDTO[] deleteProduct(ProductDTO[] Dtos) {
 		while (true) {
 			System.out.println("3. 상품 삭제");
-			int[] searched = productSearchByName(adminDtos);
-			if (searchedResult(adminDtos, searched)) {
-				adminDtos = deleteProcess(adminDtos, searched);
+			int[] searched = productSearchByName(Dtos);
+			if (searchedResult(Dtos, searched)) {
+				Dtos = deleteProcess(Dtos, searched);
 				break;
 			}
 		}
-		return adminDtos;
+		return Dtos;
 	}
 
-	public ProductAdminDTO[] deleteProcess(ProductAdminDTO[] adminDtos, int[] arr) {
+	public ProductDTO[] deleteProcess(ProductDTO[] Dtos, int[] arr) {
 		while (true) {
 			System.out.println("삭제할 상품의 검색 번호를 입력하세요 0. 돌아가기");
 			int temp;
@@ -286,27 +302,28 @@ public class ProductAdminDAO {
 				System.out.println("상품 수정 종료");
 				break;
 			} else if (temp <= arr.length && temp > 0) {
-				ProductAdminDTO dto = adminDtos[arr[temp-1]];
-				display(dto);
+				ProductDTO dto = Dtos[arr[temp - 1]];
+				dao.display(dto);
 				System.out.println("정말 삭제하시겠습니까?");
 				System.out.println("삭제하려면 아무 키나 입력 0. 돌아가기 ");
 				String str = scan.nextLine();
-				if(str.equals("0")) {
+				if (str.equals("0")) {
 					break;
 				} else {
-					ProductAdminDTO[] tempDtos = new ProductAdminDTO[adminDtos.length-1];
-					int count =0;
-					for (int i=0; i<adminDtos.length; i++) {
-						if(i!=(arr[temp-1])) {
-							tempDtos[count]=adminDtos[i];
+					ProductDTO[] tempDtos = new ProductDTO[Dtos.length - 1];
+					int count = 0;
+					for (int i = 0; i < Dtos.length; i++) {
+						if (i != (arr[temp - 1])) {
+							tempDtos[count] = Dtos[i];
 							count++;
 						}
 					}
-					displays(tempDtos);;
-					adminDtos=tempDtos;
+					dao.displays(tempDtos);
+					;
+					Dtos = tempDtos;
 				}
 			}
 		}
-		return adminDtos;
+		return Dtos;
 	}
 }
