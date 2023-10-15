@@ -75,10 +75,28 @@ public class ProductUserDTO {
 
 		this.tel = tel;
 	}
+	
+	public int getProductIdx() {
+		return productIdx;
+	}
+
+	public void setProductIdx(int productIdx) {
+		this.productIdx = productIdx;
+	}
+
+	public int getProductNum() {
+		return productNum;
+	}
+
+	public void setProductNum(int productNum) {
+		this.productNum = productNum;
+	}
+
+
 
 	// 개인정보 - 아이디,이름, 비밀번호, 주소, 연락처, 이메일, 포인트 잔액
 	String id, pw, adress, name, email, tel;
-	int point;
+	int point, productIdx, productNum;
 
 	public ProductUserDTO(String id, String pw) {
 		super();
@@ -89,5 +107,10 @@ public class ProductUserDTO {
 		this.adress="";
 		this.tel="";
 		this.point=0;
+	}
+	public ProductUserDTO(int productIdx, int productNum) {
+		super();
+		this.productIdx = productIdx;
+		this.productNum = productNum;
 	}
 }

@@ -3,7 +3,10 @@ package Test;
 import java.util.Scanner;
 
 public class ProductDAO {
-	
+	ProductDTO dto = new ProductDTO(0," ",0);
+	ProductDAO dao = new ProductDAO();
+	ProductUserDAO userDao = new ProductUserDAO();
+	ProductAdminDAO adminDao = new ProductAdminDAO();
 	public ProductDTO[] productList() {
 		ProductDTO[] Dtos = new ProductDTO[5];
 		Dtos[0] = new ProductDTO(1, "스카프", 15000);
@@ -14,7 +17,20 @@ public class ProductDAO {
 
 		return Dtos;
 	}
-	
+	public boolean runMode(ProductDTO[] Dtos, ProductUserDTO[] userDtos) {
+		dto.mode = dao.chooseMode();
+		if (dto.mode == 3) {
+			return false;
+		} else if (dto.mode == 1) {
+			if (userDao.userLogin(userDtos)) {
+			}
+		} else if (dto.mode == 2) {
+			if (adminDao.adminLogin()) {
+				while (adminDao.adminMenu(Dtos));
+			}
+		}
+		return true;
+	}
 	public int chooseMode() {
 		Scanner scan = new Scanner(System.in);
 		while(true) {
@@ -33,14 +49,14 @@ public class ProductDAO {
 		}
 	}
 	
-	public void display(ProductDTO Dto) {
-		System.out.println(Dto.getIndex() + ". " + Dto.getName() + " " + Dto.getPrice() + "원");
+	public void display(ProductDTO dto) {
+		System.out.println(dto.getIndex() + ". " + dto.getName() + " " + dto.getPrice() + "원");
 	}
 
-	public void displays(ProductDTO[] Dtos) {
+	public void displays(ProductDTO[] dtos) {
 		System.out.println("상품 목록");
-		for (int i = 0; i < Dtos.length; i++) {
-			display(Dtos[i]);
+		for (int i = 0; i < dtos.length; i++) {
+			display(dtos[i]);
 		}
 	}
 }
