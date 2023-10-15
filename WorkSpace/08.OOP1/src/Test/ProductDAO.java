@@ -17,20 +17,7 @@ public class ProductDAO {
 
 		return Dtos;
 	}
-	public boolean runMode(ProductDTO[] Dtos, ProductUserDTO[] userDtos) {
-		dto.mode = dao.chooseMode();
-		if (dto.mode == 3) {
-			return false;
-		} else if (dto.mode == 1) {
-			if (userDao.userLogin(userDtos)) {
-			}
-		} else if (dto.mode == 2) {
-			if (adminDao.adminLogin()) {
-				while (adminDao.adminMenu(Dtos));
-			}
-		}
-		return true;
-	}
+
 	public int chooseMode() {
 		Scanner scan = new Scanner(System.in);
 		while(true) {
