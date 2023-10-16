@@ -92,11 +92,20 @@ public class ProductUserDTO {
 		this.productNum = productNum;
 	}
 
+	public int[][] getKarts() {
+		return karts;
+	}
+
+	public void setKarts(int[][] karts) {
+		this.karts = karts;
+	}
+
 
 
 	// 개인정보 - 아이디,이름, 비밀번호, 주소, 연락처, 이메일, 포인트 잔액
 	String id, pw, adress, name, email, tel;
 	int point, productIdx, productNum;
+	int[][] karts;
 
 	public ProductUserDTO(String id, String pw) {
 		super();
@@ -107,6 +116,7 @@ public class ProductUserDTO {
 		this.adress="";
 		this.tel="";
 		this.point=0;
+		this.karts = new int[0][2];
 	}
 	public ProductUserDTO(int productIdx, int productNum) {
 		super();

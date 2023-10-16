@@ -87,7 +87,6 @@ public class ProductUserDAO {
 	}
 
 	public ProductUserDTO userMenu(ProductDTO[] dtos, ProductUserDTO userDto) {
-		ProductUserDTO[] karts;
 		while (true) {
 			dao.displays(dtos);
 			int menuNum = selectUserMenu();
@@ -105,7 +104,8 @@ public class ProductUserDAO {
 			}
 			if (menuNum == 3) {
 
-			} if (menuNum == 9) {
+			}
+			if (menuNum == 9) {
 				break;
 			}
 		}
@@ -173,7 +173,7 @@ public class ProductUserDAO {
 					System.out.println(temp + "개 가격 : " + temp * dto.getPrice());
 					System.out.println("1. 구매    0.아무 키나 눌러 취소");
 					if (sc.nextLine().equals("1")) {
-						productPurchaseProcess(dto, userDto, temp);// 여기서 중단됨
+						userDto = productPurchaseProcess(userDto, temp);// 여기서 중단됨
 					}
 					break;
 				}
@@ -183,7 +183,7 @@ public class ProductUserDAO {
 		}
 	}
 
-	public void productPurchaseProcess(ProductDTO dto, ProductUserDTO userDto, int temp) {
+	public ProductUserDTO productPurchaseProcess(ProductUserDTO userDto, int temp) {
 		System.out.println("상품 구매 중...");
 		if (userDto.getPoint() >= temp) {
 			System.out.println("구매 완료");
@@ -192,57 +192,53 @@ public class ProductUserDAO {
 		} else {
 			System.out.println("잔액이 부족합니다.");
 		}
+		return userDto;
 	}
 
-	public ProductUserDTO[] addTokarts(ProductUserDTO[] karts, int productIdx, int productNum) {
-		ProductUserDTO[] temp = new ProductUserDTO[karts.length + 1];
-		for (int i = 0; i < karts.length; i++) {
-			temp[i] = karts[i];
+	public ProductUserDTO addTokarts(ProductUserDTO userDto, int productIdx, int productNum) {
+		int[][] temp = new int[userDto.karts.length + 1][];
+		for (int i = 0; i < userDto.karts.length; i++) {
+			temp[i] = userDto.getKarts()[i];
 		}
-		temp[karts.length].setProductIdx(productIdx);
-		temp[karts.length].setProductNum(productNum);
-		return temp;
+		temp[userDto.karts.length][0] = productIdx;
+		temp[userDto.karts.length][1] = productNum;
+		userDto.setKarts(temp);
+		return userDto;
 	}
 
-	public ProductUserDTO[] addTokarts(int productIdx, int productNum) {
-		ProductUserDTO[] karts = new ProductUserDTO[1];
-		karts[0].setProductIdx(productIdx);
-		karts[0].setProductNum(productNum);
-		return karts;
-	}
-
-	public ProductUserDTO[] deleteFromkarts(ProductUserDTO[] karts, int num) {
-		karts[num] = null;
-		ProductUserDTO[] temp = new ProductUserDTO[karts.length - 1];
+	public ProductUserDTO deleteFromkarts(ProductUserDTO userDto, int num) {
+		int[][] temp = new int[userDto.getKarts().length - 1][2];
 		int count = 0;
-		for (ProductUserDTO kart : karts) {
-			if (kart != null) {
-				temp[count] = kart;
+		for (int i=0; i<temp.length+1; i++) {
+			if (i != num) {
+				temp[count] = userDto.getKarts()[i];
 				count++;
 			}
 		}
-		return temp;
+		userDto.setKarts(temp);
+		return userDto;
 
 	}
 
-	public void kartsPurchaseProcess(ProductDTO[] dtos, ProductUserDTO[] karts, ProductUserDTO userDto) {
+	public ProductUserDTO kartsPurchaseProcess(ProductDTO[] dtos, ProductUserDTO userDto) {
 		int sum = 0;
-		for (ProductUserDTO kart : karts) {
+		for(int i=0; i<userDto.getKarts().length; i++) {
 			for (ProductDTO dto : dtos) {
-				if (kart.getProductIdx() == dto.getIndex()) {
-					sum += kart.getProductNum() * dto.getPrice();
+				if (userDto.getKarts()[i][0] == dto.getIndex()) {
+					sum += userDto.getKarts()[i][1] * dto.getPrice();
 				}
 			}
+			
 		}
-		productPurchaseProcess(dto, userDto, sum);
+		return productPurchaseProcess(userDto, sum);
 	}
 
-	public void displaykarts(ProductUserDTO[] karts, ProductDTO[] dtos) {
-		for (ProductUserDTO kart : karts) {
+	public void displaykarts(ProductUserDTO userDto, ProductDTO[] dtos) {
+		for (int i=0; i<userDto.getKarts().length; i++) {
 			for (ProductDTO dto : dtos) {
-				if (kart.getProductIdx() == dto.getIndex()) {
+				if (userDto.getKarts()[i][0] == dto.getIndex()) {
 					System.out.println(dto.getIndex() + ". " + dto.getName() + " " + dto.getPrice() + "원"
-							+ kart.getProductNum() + "개");
+							+ userDto.getKarts()[i][1] + "개");
 				}
 			}
 		}

@@ -1,7 +1,10 @@
 package pack01.login;
 
+
+
 public class MemberDAO {
-	MemberDTO dto = new MemberDTO();
+
+
 
 	public boolean loginCheck(MemberDTO dto) {
 		dto.idPw.put("admin", "admin1234");
