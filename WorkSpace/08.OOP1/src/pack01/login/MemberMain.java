@@ -17,6 +17,5 @@ public class MemberMain {
 		} else {
 			System.out.println("화면 새로고침");
 		}
-		scan.close();
 	}
 }

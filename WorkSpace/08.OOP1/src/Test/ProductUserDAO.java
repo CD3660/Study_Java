@@ -57,12 +57,8 @@ public class ProductUserDAO {
 	public int selectUserMenu() {
 		while (true) {
 			System.out.println("유저 메뉴");
-			System.out.println("0. 개인 정보 수정");
 			System.out.println("1. 상품 검색");
-			System.out.println("2. 상품 정렬 방법 변경");
-			System.out.println("3. 상품 구매");
 			System.out.println("4. 포인트 충전");
-			System.out.println("5. 포인트 반환");
 			System.out.println("6. 장바구니");
 			System.out.println("9. 이전으로 (로그아웃)");
 			String str = sc.nextLine();
@@ -72,12 +68,8 @@ public class ProductUserDAO {
 				return 0;
 			} else if (str.equals("1")) {
 				return 1;
-			} else if (str.equals("2")) {
-				return 2;
 			} else if (str.equals("4")) {
 				return 4;
-			} else if (str.equals("5")) {
-				return 5;
 			} else if (str.equals("6")) {
 				return 6;
 			} else {
@@ -91,19 +83,22 @@ public class ProductUserDAO {
 			dao.displays(dtos);
 			int menuNum = selectUserMenu();
 			if (menuNum == 4) {
-				fillPoint(null);
+				userDto = fillPoint(userDto);
 			}
 			if (menuNum == 0) {
 
 			}
 			if (menuNum == 1) {
-
+				productSearchPurchase(dtos, userDto);
 			}
 			if (menuNum == 2) {
 
 			}
 			if (menuNum == 3) {
 
+			}
+			if (menuNum == 6) {
+				userDto = kartsPurchaseProcess(dtos, userDto);
 			}
 			if (menuNum == 9) {
 				break;
@@ -112,7 +107,7 @@ public class ProductUserDAO {
 		return userDto;
 	}
 
-	public void productSearchPurchase(ProductDTO[] dtos, int userNum) {
+	public void productSearchPurchase(ProductDTO[] dtos, ProductUserDTO userDto) {
 		int[] tempArr = adminDao.productSearchByName(dtos);
 		if (adminDao.searchedResult(dtos, tempArr)) {
 			while (true) {
@@ -148,9 +143,9 @@ public class ProductUserDAO {
 					if (a == 0) {
 						System.out.println("상품 검색 종료");
 					} else if (a == 1) {
-
+						userDto=productPurchaseCount(dto, userDto);
 					} else if (a == 2) {
-
+						userDto=addTokarts(userDto, dto.getIndex(), dao.inputNum());
 					}
 					break;
 				} else {
@@ -160,7 +155,7 @@ public class ProductUserDAO {
 		}
 	}
 
-	public void productPurchaseCount(ProductDTO dto, ProductUserDTO userDto) {
+	public ProductUserDTO productPurchaseCount(ProductDTO dto, ProductUserDTO userDto) {
 		dao.display(dto);
 		System.out.println("구매 수량을 입력하세요");
 		while (true) {
@@ -175,7 +170,7 @@ public class ProductUserDAO {
 					if (sc.nextLine().equals("1")) {
 						userDto = productPurchaseProcess(userDto, temp);// 여기서 중단됨
 					}
-					break;
+					return userDto;
 				}
 			} catch (Exception e) {
 				System.out.println("입력 오류");
@@ -196,7 +191,7 @@ public class ProductUserDAO {
 	}
 
 	public ProductUserDTO addTokarts(ProductUserDTO userDto, int productIdx, int productNum) {
-		int[][] temp = new int[userDto.karts.length + 1][];
+		int[][] temp = new int[userDto.karts.length + 1][2];
 		for (int i = 0; i < userDto.karts.length; i++) {
 			temp[i] = userDto.getKarts()[i];
 		}
@@ -209,7 +204,7 @@ public class ProductUserDAO {
 	public ProductUserDTO deleteFromkarts(ProductUserDTO userDto, int num) {
 		int[][] temp = new int[userDto.getKarts().length - 1][2];
 		int count = 0;
-		for (int i=0; i<temp.length+1; i++) {
+		for (int i = 0; i < temp.length + 1; i++) {
 			if (i != num) {
 				temp[count] = userDto.getKarts()[i];
 				count++;
@@ -221,20 +216,25 @@ public class ProductUserDAO {
 	}
 
 	public ProductUserDTO kartsPurchaseProcess(ProductDTO[] dtos, ProductUserDTO userDto) {
+		displaykarts(userDto, dtos);
+		System.out.println("구매시 아무 키나 입력 0. 취소");
+		if (sc.nextLine().equals("0")) {
+			return userDto;
+		}
 		int sum = 0;
-		for(int i=0; i<userDto.getKarts().length; i++) {
+		for (int i = 0; i < userDto.getKarts().length; i++) {
 			for (ProductDTO dto : dtos) {
 				if (userDto.getKarts()[i][0] == dto.getIndex()) {
 					sum += userDto.getKarts()[i][1] * dto.getPrice();
 				}
 			}
-			
+
 		}
 		return productPurchaseProcess(userDto, sum);
 	}
 
 	public void displaykarts(ProductUserDTO userDto, ProductDTO[] dtos) {
-		for (int i=0; i<userDto.getKarts().length; i++) {
+		for (int i = 0; i < userDto.getKarts().length; i++) {
 			for (ProductDTO dto : dtos) {
 				if (userDto.getKarts()[i][0] == dto.getIndex()) {
 					System.out.println(dto.getIndex() + ". " + dto.getName() + " " + dto.getPrice() + "원"
@@ -244,13 +244,15 @@ public class ProductUserDAO {
 		}
 	}
 
-	public void fillPoint(ProductUserDTO userDto) {
+	public ProductUserDTO fillPoint(ProductUserDTO userDto) {
 		System.out.println("4. 포인트 충전");
 		while (true) {
 			System.out.println("충전 금액을 입력하세요 0. 돌아가기");
 			int point = 0;
 			try {
 				point = Integer.parseInt(sc.nextLine());
+				userDto.setPoint(userDto.getPoint() + point);
+				break;
 			} catch (Exception e) {
 				System.out.println("입력 오류");
 			}
@@ -258,8 +260,8 @@ public class ProductUserDAO {
 				System.out.println("자연수를 입력하세요");
 				continue;
 			}
-			userDto.setPoint(userDto.getPoint() + point);
 		}
+		return userDto;
 	}
 
 	public void displayCustomerData(ProductUserDTO userDto) {// 회원정보

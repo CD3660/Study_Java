@@ -3,10 +3,11 @@ package Test;
 import java.util.Scanner;
 
 public class ProductDAO {
-	ProductDTO dto = new ProductDTO(0," ",0);
-	ProductDAO dao = new ProductDAO();
-	ProductUserDAO userDao = new ProductUserDAO();
-	ProductAdminDAO adminDao = new ProductAdminDAO();
+	ProductDTO dto = new ProductDTO(0, " ", 0);
+	ProductDAO dao;
+	ProductUserDAO userDao;
+	Scanner scan = new Scanner(System.in);
+
 	public ProductDTO[] productList() {
 		ProductDTO[] Dtos = new ProductDTO[5];
 		Dtos[0] = new ProductDTO(1, "스카프", 15000);
@@ -20,14 +21,14 @@ public class ProductDAO {
 
 	public int chooseMode() {
 		Scanner scan = new Scanner(System.in);
-		while(true) {
+		while (true) {
 			System.out.println("1. 사용자 모드   2. 관리자 모드    3. 종료");
 			String str = scan.nextLine();
-			if(str.equals("1")) {
+			if (str.equals("1")) {
 				return 1;
-			} else if(str.equals("2")) {
+			} else if (str.equals("2")) {
 				return 2;
-			} else if(str.equals("3")){
+			} else if (str.equals("3")) {
 				return 3;
 			} else {
 				System.out.println("입력 오류");
@@ -35,7 +36,7 @@ public class ProductDAO {
 			}
 		}
 	}
-	
+
 	public void display(ProductDTO dto) {
 		System.out.println(dto.getIndex() + ". " + dto.getName() + " " + dto.getPrice() + "원");
 	}
@@ -44,6 +45,18 @@ public class ProductDAO {
 		System.out.println("상품 목록");
 		for (int i = 0; i < dtos.length; i++) {
 			display(dtos[i]);
+		}
+	}
+
+	public int inputNum() {
+		while (true) {
+			System.out.println("숫자를 입력");
+			try {
+				int a = Integer.parseInt(scan.nextLine());
+				return a;
+			} catch (Exception e) {
+				System.out.println("입력 오류");
+			}
 		}
 	}
 }
