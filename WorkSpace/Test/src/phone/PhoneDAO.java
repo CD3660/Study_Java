@@ -176,11 +176,12 @@ public class PhoneDAO extends SuperPhone {
 			if (dto.isDmbOnOff()) {
 				str += "DMB기능 ";
 			}
-			return str;
 		}
-		Generation1DTO dto = (Generation1DTO) sp;
-		if (dto.isCallOnOff()) {
-			str += "통화기능 ";
+		if (gen >= 1) {
+			Generation1DTO dto = (Generation1DTO) sp;
+			if (dto.isCallOnOff()) {
+				str += "통화기능 ";
+			}
 		}
 		if (str.equals("")) {
 			str += "없음";
@@ -248,17 +249,21 @@ public class PhoneDAO extends SuperPhone {
 		Generation2DTO dto2 = get2Dto();
 		Generation3DTO dto3 = get3Dto();
 		if (dto.isPowerOnOff()) {
-			if (dto3.isWebtoonOnOff() && noNullCheck(dto3)) {
-				dto3.setWebtoonOnOff(false);
-				System.out.println("웹툰 앱이 종료되었습니다.");
+			if (noNullCheck(dto3)) {
+				if (dto3.isWebtoonOnOff()) {
+					dto3.setWebtoonOnOff(false);
+					System.out.println("웹툰 앱이 종료되었습니다.");
+				}
+				if (dto3.isInternetOnOff()) {
+					dto3.setInternetOnOff(false);
+					System.out.println("인터넷이 꺼졌습니다.");
+				}
 			}
-			if (dto3.isInternetOnOff() && noNullCheck(dto3)) {
-				dto3.setInternetOnOff(false);
-				System.out.println("인터넷이 꺼졌습니다.");
-			}
-			if (dto2.isDmbOnOff() && noNullCheck(dto2)) {
-				dto2.setDmbOnOff(false);
-				System.out.println("dmb가 꺼졌습니다.");
+			if (noNullCheck(dto2)) {
+				if (dto2.isDmbOnOff()) {
+					dto2.setDmbOnOff(false);
+					System.out.println("dmb가 꺼졌습니다.");
+				}
 			}
 			if (dto.isCallOnOff()) {
 				dto.setCallOnOff(false);
@@ -281,13 +286,17 @@ public class PhoneDAO extends SuperPhone {
 			System.out.println("먼저 전화를 켜주세요.");
 			return;
 		}
-		if (noNullCheck(dto2) && dto2.isDmbOnOff()) {
-			System.out.println("먼저 dmb를 꺼주세요.");
-			return;
+		if (noNullCheck(dto2)) {
+			if (dto2.isDmbOnOff()) {
+				System.out.println("먼저 dmb를 꺼주세요.");
+				return;
+			}
 		}
-		if (noNullCheck(dto3) && dto3.isInternetOnOff()) {
-			System.out.println("먼저 인터넷을 꺼주세요.");
-			return;
+		if (noNullCheck(dto3)) {
+			if (dto3.isInternetOnOff()) {
+				System.out.println("먼저 인터넷을 꺼주세요.");
+				return;
+			}
 		}
 		if (dto.isCallOnOff()) {
 			dto.setCallOnOff(false);
@@ -327,9 +336,11 @@ public class PhoneDAO extends SuperPhone {
 				System.out.println("먼저 전원을 켜주세요");
 				return;
 			}
-			if (noNullCheck(dto3) && dto3.isInternetOnOff()) {
-				System.out.println("먼저 인터넷을 꺼주세요.");
-				return;
+			if (noNullCheck(dto3)) {
+				if (dto3.isInternetOnOff()) {
+					System.out.println("먼저 인터넷을 꺼주세요.");
+					return;
+				}
 			}
 			if (dto2.isDmbOnOff()) {
 				System.out.println("DMB를 종료합니다.");
@@ -348,7 +359,8 @@ public class PhoneDAO extends SuperPhone {
 		if (noNullCheck(dto)) {
 			if (!dto.isDmbOnOff()) {
 				System.out.println("먼저 dmb를 켜주세요.");
-			} else if (!dto.isDmbOnOff()) {
+			} else {
+				System.out.println("변경할 채널을 입력하세요.");
 				int before = dto.getChannel();
 				int channel = getIntByScan();
 				dto.setChannel(channel);
