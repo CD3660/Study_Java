@@ -336,6 +336,10 @@ public class PhoneDAO extends SuperPhone {
 				System.out.println("먼저 전원을 켜주세요");
 				return;
 			}
+			if (dto2.isCallOnOff()) {
+				System.out.println("먼저 통화를 꺼주세요");
+				return;
+			}
 			if (noNullCheck(dto3)) {
 				if (dto3.isInternetOnOff()) {
 					System.out.println("먼저 인터넷을 꺼주세요.");
@@ -374,6 +378,14 @@ public class PhoneDAO extends SuperPhone {
 	public void internetToggle() {
 		Generation3DTO dto = get3Dto();
 		if (noNullCheck(dto)) {
+			if (dto.isCallOnOff()) {
+				System.out.println("먼저 통화를 꺼주세요");
+				return;
+			}
+			if (dto.isDmbOnOff()) {
+				System.out.println("먼저 DMB를 꺼주세요");
+				return;
+			}
 			if (!dto.isPowerOnOff()) {
 				System.out.println("먼저 전원을 켜주세요.");
 			} else if (dto.isInternetOnOff()) {
