@@ -6,11 +6,11 @@ public class Horse extends Thread {
 	int idx;
 	Random random = new Random();
 	DTO dto;
+	int run;
 	@Override
 	public void run() {
-		int run = 0;
 		while (true) {
-			run += random.nextInt(7) + 1;
+			run += random.nextInt(10) + 1;
 			if(run >= 100) {
 				break;
 			}
@@ -25,7 +25,7 @@ public class Horse extends Thread {
 		if(dto.rank[dto.rank.length-1]!=0) {
 			System.out.println("최종 순위");
 			for(int i=0; i<dto.rank.length; i++) {
-				System.out.println(dto.rank[i] + "번 말 " + (i+1) + "등!");
+				System.out.println((i+1) + "등 : " + dto.rank[i] + "번 말");
 			}
 		}
 	}
