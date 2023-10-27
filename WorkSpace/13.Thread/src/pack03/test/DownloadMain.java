@@ -14,5 +14,6 @@ public class DownloadMain {
 			Download dl = new Download(str);
 			dl.start();
 		}
+		sc.close();
 	}
 }
