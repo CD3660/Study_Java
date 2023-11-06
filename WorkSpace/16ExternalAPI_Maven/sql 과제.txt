@@ -1,0 +1,62 @@
+CREATE TABLE scott.tbl_order (
+    order_no   VARCHAR2(16) PRIMARY KEY NOT NULL,
+    custom_no  VARCHAR2(16) NOT NULL,
+    order_date DATE NOT NULL,
+    price      NUMBER(15, 2) NOT NULL,
+    city       VARCHAR2(256),
+    deli_date  DATE,
+    pay        NUMBER(15, 2),
+    discount   NUMBER(15, 2) NOT NULL,
+    point      NUMBER(15, 2) NOT NULL
+);
+
+ALTER TABLE tbl_order RENAME COLUMN city TO city_code;
+
+ALTER TABLE tbl_order MODIFY (
+    city_code NUMBER(8)
+);
+
+ALTER TABLE tbl_order MODIFY (
+    point null
+);
+insert into tbl_order (order_no,
+    custom_no,
+    order_date,
+    price, city_code, 
+    deli_date,
+    pay,
+    discount,
+    point
+) values (
+    'O123456',
+    'C007',
+    to_date(190713,'yymmdd'),
+    15000,
+    45111,
+    null,
+    14000,
+    1000,
+    140
+);
+insert into tbl_order (order_no,
+    custom_no,
+    order_date,
+    price, city_code, 
+    deli_date,
+    pay,
+    discount,
+    point
+) values (
+    'O54321',
+    'C008',
+    to_date(190713,'yymmdd'),
+    5000,
+    54321,
+    null,
+    5000,
+    0,
+    0
+);
+select city_code, pay from tbl_order where order_no = 'O54321';
+update tbl_order set point = 50 where order_no = 'O54321';
+select order_no, price, city_code from tbl_order
