@@ -6,7 +6,5 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Study_Java/Study_Java/WorkSpace/cdcollection.jar"/>
-	<classpathentry kind="lib" path="D:/Study_Java/Study_Java/WorkSpace/ojdbc11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
